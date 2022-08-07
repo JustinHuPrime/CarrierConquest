@@ -83,14 +83,14 @@ WARNINGS := -pedantic -pedantic-errors -Wall -Wextra -Wdouble-promotion\
 -Wnon-virtual-dtor -Weffc++ -Wstrict-null-sentinel -Wold-style-cast\
 -Woverloaded-virtual -Wsign-promo -Wunused -Wdisabled-optimization
 
-OPTIONS := -std=c++20 -D_REENTRANT -D_POSIX_C_SOURCE=202208L -I$(SRCDIR)\
--Ilibs/stb -Ilibs/json/single_include #$(shell pkg-config --cflags )
+OPTIONS := -std=c++20 -D_POSIX_C_SOURCE=202208L -I$(SRCDIR)\
+-Ilibs/stb -Ilibs/json/single_include $(shell pkg-config --cflags sdl2 glew opengl freetype2 glm)
 TOPTIONS := -I$(TSRCDIR) -Ilibs/Catch2/src -Ilibs/Catch2/Build/generated-includes
-LIBS := #$(shell pkg-config --libs )
+LIBS := $(shell pkg-config --libs sdl2 glew opengl freetype2 glm)
 TLIBS := libs/Catch2/Build/src/libCatch2Main.a libs/Catch2/Build/src/libCatch2.a
 
-DEBUGOPTIONS := -Og -ggdb
-RELEASEOPTIONS := -O3 -DNDEBUG
+DEBUGOPTIONS := -Og -ggdb -DASSET_PREFIX=\"assets\"
+RELEASEOPTIONS := -O3 -DNDEBUG -DASSET_PREFIX=\"/usr/share/carrier-conquest/assets\"
 
 
 .PHONY: debug release docs install clean
