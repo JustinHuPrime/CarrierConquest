@@ -1,0 +1,34 @@
+// Copyright 2022 Justin Hu
+//
+// This file is part of Carrier Conquest.
+//
+// Carrier Conquest is free software: you can redistribute it and/or modify it
+// under the terms of the GNU Affero General Public License as published by the
+// Free Software Foundation, either version 3 of the License, or (at your
+// option) any later version.
+//
+// Carrier Conquest is distributed in the hope that it will be useful, but
+// WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
+// or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public
+// License for more details.
+//
+// You should have received a copy of the GNU General Public License along with
+// Carrier Conquest. If not, see <https://www.gnu.org/licenses/>.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+#ifndef CARRIERCONQUEST_UTIL_PAIRHASH_H_
+#define CARRIERCONQUEST_UTIL_PAIRHASH_H_
+
+#include <utility>
+
+namespace carrier_conquest::util {
+template <typename T1, typename T2>
+struct hash {
+  size_t operator()(std::pair<T1, T2> const &p) const noexcept {
+    return 3 * std::hash<T1>()(p.first) + std::hash<T2>()(p.second);
+  }
+};
+}  // namespace carrier_conquest::util
+
+#endif  // CARRIERCONQUEST_UTIL_PAIRHASH_H_

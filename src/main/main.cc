@@ -17,11 +17,83 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+#include <SDL2/SDL.h>
+#include <stb_image.h>
+
 #include <iostream>
+#include <sstream>
+
+#include "options.h"
+#include "ui/resources.h"
+#include "ui/window.h"
+#include "util/exceptions/initException.h"
+#include "version.h"
 
 using namespace std;
+using namespace carrier_conquest;
+using namespace carrier_conquest::util::exceptions;
+using namespace carrier_conquest::ui;
 
-int main() {
-  cout << "Hello, World!" << endl;
-  return 0;
+int main(int argc, char **) {
+  cout << "Carrier Conquest version " << VERSION_MAJOR << "." << VERSION_MINOR
+       << "." << VERSION_PATCH << endl;
+  cout << "Copyright 2022 Justin Hu" << endl;
+  cout << "This is free software; see the source for copying conditions. There "
+          "is NO"
+       << endl;
+  cout << "warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR "
+          "PURPOSE."
+       << endl;
+
+  if (argc >= 2) {
+    cerr << "Carrier Conquest is a graphical progran and does not accept "
+            "command line options!"
+         << endl;
+    return EXIT_FAILURE;
+  }
+
+  try {  // check SDL2
+    SDL_version linked;
+    SDL_GetVersion(&linked);
+    SDL_version compiled;
+    SDL_VERSION(&compiled);
+    if (compiled.major != linked.major || compiled.minor > linked.minor) {
+      stringstream ss;
+      ss << "Expected SDL version " << compiled.major << "." << compiled.minor
+         << "." << compiled.patch << " or later, but found " << linked.major
+         << "." << linked.minor << "." << linked.patch;
+      throw InitException("Incompatible SDL version", ss.str());
+    }
+
+    // initialize and check freetype
+
+    // initialize stbi
+    stbi_set_flip_vertically_on_load(true);
+
+    // set up static objects
+    options = make_unique<Options>();
+    window = make_unique<Window>();
+    resources = make_unique<ResourceManager>();
+
+    // load resources
+
+    // start actual game
+
+    return EXIT_SUCCESS;
+  } catch (InitException const &e) {
+    if (SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, e.getTitle().c_str(),
+                                 e.getMessage().c_str(),
+                                 window ? window->getWindow() : nullptr) != 0) {
+      cerr << "ERROR: " << e.getTitle() << ": " << e.getMessage() << endl;
+      return EXIT_FAILURE;
+    }
+  } catch (...) {
+    if (SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Unexpected Error",
+                                 "An unexpected error has occurred.",
+                                 window ? window->getWindow() : nullptr) != 0) {
+      cerr << "ERROR: Unexpected Error: An unexpected error has occurred."
+           << endl;
+      throw;
+    }
+  }
 }
