@@ -1,19 +1,19 @@
 # Copyright 2022 Justin Hu
 #
-# This file is part of PROJECT_NAME.
+# This file is part of Carrier Conquest.
 #
-# PROJECT_NAME is free software: you can redistribute it and/or modify it
+# Carrier Conquest is free software: you can redistribute it and/or modify it
 # under the terms of the GNU Affero General Public License as published by the
 # Free Software Foundation, either version 3 of the License, or (at your
 # option) any later version.
 #
-# PROJECT_NAME is distributed in the hope that it will be useful, but WITHOUT
+# Carrier Conquest is distributed in the hope that it will be useful, but WITHOUT
 # ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
 # FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more
 # details.
 #
 # You should have received a copy of the GNU General Public License along with
-# PROJECT_NAME. If not, see <https://www.gnu.org/licenses/>.
+# Carrier Conquest. If not, see <https://www.gnu.org/licenses/>.
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -61,8 +61,8 @@ TDEPDIR := $(DEPDIRPREFIX)/$(TESTSUFFIX)
 TDEPS := $(patsubst $(TSRCDIR)/%.cc,$(TDEPDIR)/%.dep,$(TSRCS))
 
 # final executable name
-EXENAME := PROJECT_NAME
-TEXENAME := PROJECT_NAME-test
+EXENAME := carrier-conquest
+TEXENAME := carrier-conquest-test
 
 
 # compiler options
@@ -83,7 +83,7 @@ WARNINGS := -pedantic -pedantic-errors -Wall -Wextra -Wdouble-promotion\
 -Wnon-virtual-dtor -Weffc++ -Wstrict-null-sentinel -Wold-style-cast\
 -Woverloaded-virtual -Wsign-promo -Wunused -Wdisabled-optimization
 
-OPTIONS := -std=c++20 -D_POSIX_C_SOURCE=202207L -I$(SRCDIR)\
+OPTIONS := -std=c++20 -D_REENTRANT -D_POSIX_C_SOURCE=202208L -I$(SRCDIR)\
 -Ilibs/stb -Ilibs/json/single_include #$(shell pkg-config --cflags )
 TOPTIONS := -I$(TSRCDIR) -Ilibs/Catch2/src -Ilibs/Catch2/Build/generated-includes
 LIBS := #$(shell pkg-config --libs )

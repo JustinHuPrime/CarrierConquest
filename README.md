@@ -1,3 +1,3 @@
-# PROJECT_NAME
+# Carrier Conquest
 
-PROJECT_BRIEF
+An action-strategy game inspired by Homeworld and Hostile Waters
