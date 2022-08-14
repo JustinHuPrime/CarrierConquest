@@ -318,6 +318,9 @@ class ResourceManager final {
   Texture2D optionsBackground;
   // TODO: options menu
 
+  // loading
+  Texture2D loadingBackground;
+
   ResourceManager() noexcept;
   ResourceManager(ResourceManager const &) noexcept = delete;
   ResourceManager(ResourceManager &&) noexcept = delete;

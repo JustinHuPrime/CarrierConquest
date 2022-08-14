@@ -446,6 +446,9 @@ void ResourceManager::loadGame() {
   // options
   optionsBackground = Texture2D(path("options") / "background.tga");
 
+  // loading
+  loadingBackground = Texture2D("loading.tga");
+
   // clean up
   image2Dv.reset();
 }
