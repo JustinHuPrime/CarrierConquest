@@ -280,12 +280,23 @@ class ResourceManager final {
   std::unique_ptr<SDL_Cursor, decltype(&SDL_FreeCursor)> arrowCursor;
 
   // generic menu
+  Font orbitron;
   ShaderProgram text2D;
   ShaderProgram solid2D;
   EBO cursorEBO;
   std::vector<VAO::Attribute> cursorAttributes;
 
   // main menu
+  Texture2D mainMenuBackground;
+  Texture2D mainMenuTitle;
+  Texture2D newCampaignOn;
+  Texture2D newCampaignOff;
+  Texture2D loadCampaignOn;
+  Texture2D loadCampaignOff;
+  Texture2D optionsOn;
+  Texture2D optionsOff;
+  Texture2D quitOn;
+  Texture2D quitOff;
 
   // new campaign
 

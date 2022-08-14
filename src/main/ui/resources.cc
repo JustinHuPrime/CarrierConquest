@@ -83,7 +83,7 @@ Shader::Shader(GLenum type, path const &filename)
   if (status != GL_TRUE) {
     int length;
     glGetShaderiv(id, GL_INFO_LOG_LENGTH, &length);
-    std::unique_ptr<char[]> log = make_unique<char[]>(length + 1);
+    unique_ptr<char[]> log = make_unique<char[]>(length + 1);
     glGetShaderInfoLog(id, length, nullptr, log.get());
     log[length] = '\0';
     cerr << "ERROR: Failed to compile " << filename << endl;
@@ -114,7 +114,7 @@ ShaderProgram::ShaderProgram(VertexShader &vs, FragmentShader &fs) noexcept
   if (status != GL_TRUE) {
     int length;
     glGetProgramiv(id, GL_INFO_LOG_LENGTH, &length);
-    std::unique_ptr<char[]> log = make_unique<char[]>(length + 1);
+    unique_ptr<char[]> log = make_unique<char[]>(length + 1);
     glGetProgramInfoLog(id, length, nullptr, log.get());
     log[length] = '\0';
     cerr << "ERROR: Failed to link shaders" << endl;
@@ -132,7 +132,7 @@ ShaderProgram::~ShaderProgram() noexcept {
 
 void ShaderProgram::use() noexcept { glUseProgram(id); }
 
-ShaderProgram &ShaderProgram::setUniform(std::string const &name,
+ShaderProgram &ShaderProgram::setUniform(string const &name,
                                          int value) noexcept {
   assert([this]() {
     unsigned currId;
@@ -145,7 +145,7 @@ ShaderProgram &ShaderProgram::setUniform(std::string const &name,
   return *this;
 }
 
-ShaderProgram &ShaderProgram::setUniform(std::string const &name,
+ShaderProgram &ShaderProgram::setUniform(string const &name,
                                          vec4 const &value) noexcept {
   assert([this]() {
     unsigned currId;
@@ -158,7 +158,7 @@ ShaderProgram &ShaderProgram::setUniform(std::string const &name,
   return *this;
 }
 
-ShaderProgram &ShaderProgram::setUniform(std::string const &name,
+ShaderProgram &ShaderProgram::setUniform(string const &name,
                                          mat4 const &value) noexcept {
   assert([this]() {
     unsigned currId;
@@ -171,7 +171,7 @@ ShaderProgram &ShaderProgram::setUniform(std::string const &name,
   return *this;
 }
 
-int ShaderProgram::getUniformLocation(std::string const &name) noexcept {
+int ShaderProgram::getUniformLocation(string const &name) noexcept {
   unordered_map<string, int>::iterator found = uniforms.find(name);
   if (found != uniforms.end()) {
     return found->second;
@@ -253,7 +253,7 @@ VBO::~VBO() noexcept {
 
 void VBO::use() noexcept { glBindBuffer(GL_ARRAY_BUFFER, id); }
 
-void VBO::update(std::vector<float> const &data, size_t offset) noexcept {
+void VBO::update(vector<float> const &data, size_t offset) noexcept {
   use();
   glBufferSubData(GL_ARRAY_BUFFER, offset, data.size() * sizeof(float),
                   data.data());
@@ -402,8 +402,11 @@ void ResourceManager::loadSplash() {
 }
 
 void ResourceManager::loadGame() {
+  // post-splash
   arrowCursor.reset(SDL_CreateSystemCursor(SDL_SYSTEM_CURSOR_ARROW));
 
+  // generic menu
+  orbitron = Font("Orbitron.ttf");
   FragmentShader text2Df("text2D.f.glsl");
   text2D = ShaderProgram(*image2Dv, text2Df);
   VertexShader solid2Dv("solid2D.v.glsl");
@@ -412,8 +415,21 @@ void ResourceManager::loadGame() {
   cursorEBO = EBO({0, 1}, GL_STATIC_DRAW);
   cursorAttributes = {VAO::Attribute::floats(2, 2, 0)};
 
+  // main menu
+  mainMenuBackground = Texture2D(path("mainMenu") / "background.tga");
+  mainMenuTitle = Texture2D(path("mainMenu") / "title.tga");
+  newCampaignOn = Texture2D(path("mainMenu") / "newCampaignOn.tga");
+  newCampaignOff = Texture2D(path("mainMenu") / "newCampaignOff.tga");
+  loadCampaignOn = Texture2D(path("mainMenu") / "loadCampaignOn.tga");
+  loadCampaignOff = Texture2D(path("mainMenu") / "loadCampaignOff.tga");
+  optionsOn = Texture2D(path("mainMenu") / "optionsOn.tga");
+  optionsOff = Texture2D(path("mainMenu") / "optionsOff.tga");
+  quitOn = Texture2D(path("mainMenu") / "quitOn.tga");
+  quitOff = Texture2D(path("mainMenu") / "quitOff.tga");
+
+  // clean up
   image2Dv.reset();
 }
 
-std::unique_ptr<ResourceManager> resources;
+unique_ptr<ResourceManager> resources;
 }  // namespace carrier_conquest::ui
