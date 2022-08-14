@@ -45,7 +45,7 @@ class Loading final {
   Background2D background;
 };
 
-void loading(LoadingThread loader, function<void()> const &next) noexcept {
+NextScene loading(LoadingThread loader, NextScene next) noexcept {
   Loading loading;
 
   while (true) {
@@ -53,13 +53,13 @@ void loading(LoadingThread loader, function<void()> const &next) noexcept {
     while (SDL_PollEvent(&event) != 0) {
       switch (event.type) {
         case SDL_QUIT: {
-          return;
+          return nullopt;
         }
       }
     }
 
     if (!loader.isRunning()) {
-      return next();
+      return next;
     }
 
     loading.draw();

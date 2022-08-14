@@ -27,6 +27,7 @@
 #include "ui/components.h"
 #include "ui/resources.h"
 #include "ui/scene/mainMenu.h"
+#include "ui/scene/scene.h"
 #include "ui/window.h"
 #include "util/exceptions/initException.h"
 #include "version.h"
@@ -100,7 +101,10 @@ int main(int argc, char **) {
     SDL_SetCursor(resources->arrowCursor.get());
 
     // start actual game
-    mainMenu();
+    NextScene next = NextScene(mainMenu);
+    while (next) {
+      next = next();
+    }
 
     return EXIT_SUCCESS;
   } catch (InitException const &e) {

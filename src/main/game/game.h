@@ -23,6 +23,9 @@
 #include <cstdint>
 #include <memory>
 #include <thread>
+#include <variant>
+
+#include "util/exceptions/loadException.h"
 
 namespace carrier_conquest::game {
 class GameState final {
@@ -43,7 +46,8 @@ class GameState final {
   GameState();
 };
 
-extern std::unique_ptr<GameState> gameState;
+extern std::variant<std::unique_ptr<GameState>, util::exceptions::LoadException>
+    gameState;
 }  // namespace carrier_conquest::game
 
 #endif  // CARRIERCONQUEST_GAME_GAME_H_

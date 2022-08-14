@@ -92,14 +92,14 @@ class NewCampaign final {
 
 constexpr array<uint32_t, 5> DIFFICULTIES = {75, 90, 100, 110, 125};
 
-void newCampaign() noexcept {
+NextScene newCampaign() noexcept {
   NewCampaign newCampaign;
   while (true) {
     SDL_Event event;
     while (SDL_PollEvent(&event) != 0) {
       switch (event.type) {
         case SDL_QUIT: {
-          return;
+          return nullopt;
         }
         case SDL_MOUSEBUTTONDOWN: {
           if (event.button.button == SDL_BUTTON_LEFT)
@@ -122,13 +122,14 @@ void newCampaign() noexcept {
                                                      DIFFICULTIES[index]);
                                  GameState::load(token);
                                }),
-                               []() {
-                                 if (gameState) {
-                                   // TODO: start playing
-                                 } else {
-                                   // TODO: failed to load
-                                 }
-                               });
+                               function([]() -> NextScene {
+                                 //  if (gameState) {
+                                 //    // TODO: start playing
+                                 //  } else {
+                                 //    // TODO: failed to load
+                                 //  }
+                                 return nullopt;
+                               }));
               }
               case 5: {
                 // back

@@ -20,8 +20,10 @@
 #ifndef CARRIERCONQUEST_UI_SCENE_NEWCAMPAIGN_H_
 #define CARRIERCONQUEST_UI_SCENE_NEWCAMPAIGN_H_
 
+#include <ui/scene/scene.h>
+
 namespace carrier_conquest::ui::scene {
-void newCampaign() noexcept;
+NextScene newCampaign() noexcept;
 }
 
 #endif  // CARRIERCONQUEST_UI_SCENE_NEWCAMPAIGN_H_

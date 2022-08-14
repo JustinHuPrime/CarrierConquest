@@ -76,7 +76,7 @@ class MainMenu final {
   Button2D quit;
 };
 
-void mainMenu() noexcept {
+NextScene mainMenu() noexcept {
   MainMenu mainMenu;
 
   while (true) {
@@ -84,7 +84,7 @@ void mainMenu() noexcept {
     while (SDL_PollEvent(&event) != 0) {
       switch (event.type) {
         case SDL_QUIT: {
-          return;
+          return nullopt;
         }
         case SDL_MOUSEBUTTONDOWN: {
           if (event.button.button == SDL_BUTTON_LEFT)
@@ -105,21 +105,22 @@ void mainMenu() noexcept {
                 return loading(LoadingThread([](stop_token const &token) {
                                  GameState::load(token);
                                }),
-                               []() {
-                                 if (gameState) {
-                                   // TODO: start playing
-                                 } else {
-                                   // TODO: failed to load
-                                 }
-                               });
+                               function([]() -> NextScene {
+                                 //  if (gameState) {
+                                 //    // TODO: start playing
+                                 //  } else {
+                                 //    // TODO: failed to load
+                                 //  }
+                                 return nullopt;
+                               }));
               }
               case 2: {
                 // options
-                return;  // TODO
+                return nullopt;  // TODO
               }
               case 3: {
                 // quit
-                return;
+                return nullopt;
               }
             }
           }

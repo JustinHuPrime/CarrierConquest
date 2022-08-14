@@ -19,16 +19,63 @@
 
 #include "game/game.h"
 
+#include <fstream>
+#include <nlohmann/json.hpp>
+
+#include "util/paths.h"
+
 using namespace std;
+using namespace std::filesystem;
+using namespace carrier_conquest::util;
+using namespace carrier_conquest::util::exceptions;
+using namespace nlohmann;
 
 namespace carrier_conquest::game {
 void GameState::generate(std::stop_token const &token,
-                         uint32_t difficulty) noexcept {}
-void GameState::load(std::stop_token const &token) noexcept {}
+                         uint32_t difficulty) noexcept {
+  // TODO
+}
+void GameState::load(std::stop_token const &token) noexcept {
+  try {
+    gameState = unique_ptr<GameState>(new GameState);
+  } catch (LoadException const &e) {
+    gameState = e;
+  }
+}
 
-GameState::GameState() {}
+void to_json(json &j, GameState const &s) {}
 
-GameState::~GameState() {}
+void from_json(json const &j, GameState &s) {}
 
-unique_ptr<GameState> gameState;
+GameState::GameState() {
+  path savePath = getSavePath() / "save.json";
+
+  try {
+    ifstream fin;
+    fin.exceptions(ifstream::failbit | ifstream::badbit);
+    fin.open(savePath, ios_base::in | ios_base::binary);
+
+    json j;
+    j.get_to(*this);
+  } catch (ios_base::failure const &e) {
+    throw LoadException("Could not read save file", e.what());
+  } catch (json::exception const &e) {
+    throw LoadException("Could not read save file", e.what());
+  }
+}
+
+GameState::~GameState() noexcept {
+  try {
+    ofstream fout;
+    fout.exceptions(ofstream::failbit | ofstream::badbit);
+    fout.open(getSavePath() / "save.json", ios_base::out | ios_base::binary);
+    json j(*this);
+    fout << setw(2) << j;
+  } catch (...) {
+    // swallow exceptions - this is a destructor
+  }
+}
+
+std::variant<std::unique_ptr<GameState>, util::exceptions::LoadException>
+    gameState;
 }  // namespace carrier_conquest::game

@@ -20,11 +20,11 @@
 #ifndef CARRIERCONQUEST_UI_SCENE_LOADING_H_
 #define CARRIERCONQUEST_UI_SCENE_LOADING_H_
 
+#include "ui/scene/scene.h"
 #include "util/loadingThread.h"
 
 namespace carrier_conquest::ui::scene {
-void loading(util::LoadingThread loader,
-             std::function<void()> const &next) noexcept;
+NextScene loading(util::LoadingThread loader, NextScene next) noexcept;
 }
 
 #endif  // CARRIERCONQUEST_UI_SCENE_LOADING_H_

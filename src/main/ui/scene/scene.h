@@ -17,13 +17,30 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CARRIERCONQUEST_UI_SCENE_MAINMENU_H_
-#define CARRIERCONQUEST_UI_SCENE_MAINMENU_H_
+#ifndef CARRIERCONQUEST_UI_SCENE_SCENE_H_
+#define CARRIERCONQUEST_UI_SCENE_SCENE_H_
 
-#include "ui/scene/scene.h"
+#include <functional>
+#include <optional>
 
 namespace carrier_conquest::ui::scene {
-NextScene mainMenu() noexcept;
-}
+struct NextScene {
+ public:
+  NextScene(std::nullopt_t) noexcept;
+  NextScene(std::function<NextScene()> const &next) noexcept;
+  NextScene(NextScene const &) noexcept = default;
+  NextScene(NextScene &&) noexcept = default;
 
-#endif  // CARRIERCONQUEST_UI_SCENE_MAINMENU_H_
+  ~NextScene() noexcept = default;
+
+  NextScene &operator=(NextScene const &) noexcept = default;
+  NextScene &operator=(NextScene &&) noexcept = default;
+
+  operator bool() const noexcept;
+  NextScene operator()() const noexcept;
+
+  std::optional<std::function<NextScene()>> value;
+};
+}  // namespace carrier_conquest::ui::scene
+
+#endif  // CARRIERCONQUEST_UI_SCENE_SCENE_H_
