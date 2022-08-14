@@ -17,29 +17,11 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CARRIERCONQUEST_OPTIONS_H_
-#define CARRIERCONQUEST_OPTIONS_H_
+#ifndef CARRIER_CONQUEST_UI_SCENE_NEWCAMPAIGN_H_
+#define CARRIER_CONQUEST_UI_SCENE_NEWCAMPAIGN_H_
 
-#include <memory>
+namespace carrier_conquest::ui::scene {
+void newCampaign() noexcept;
+}
 
-namespace carrier_conquest {
-class Options final {
- public:
-  enum class MSAALevel { ZERO = 0, TWO = 2, FOUR = 4, EIGHT = 8 } msaa;
-  bool vsync;
-  bool playTutorial;
-
-  Options();
-  Options(Options const &) noexcept = delete;
-  Options(Options &&) noexcept = delete;
-
-  ~Options() noexcept;
-
-  Options &operator=(Options const &) noexcept = delete;
-  Options &operator=(Options &&) noexcept = delete;
-};
-
-extern std::unique_ptr<Options> options;
-}  // namespace carrier_conquest
-
-#endif  // CARRIERCONQUEST_OPTIONS_H_
+#endif  // CARRIER_CONQUEST_UI_SCENE_NEWCAMPAIGN_H_

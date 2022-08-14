@@ -414,6 +414,8 @@ void ResourceManager::loadGame() {
   solid2D = ShaderProgram(solid2Dv, solid2Df);
   cursorEBO = EBO({0, 1}, GL_STATIC_DRAW);
   cursorAttributes = {VAO::Attribute::floats(2, 2, 0)};
+  backOn = Texture2D(path("menu") / "backOn.tga");
+  backOff = Texture2D(path("menu") / "backOff.tga");
 
   // main menu
   mainMenuBackground = Texture2D(path("mainMenu") / "background.tga");
@@ -426,6 +428,23 @@ void ResourceManager::loadGame() {
   optionsOff = Texture2D(path("mainMenu") / "optionsOff.tga");
   quitOn = Texture2D(path("mainMenu") / "quitOn.tga");
   quitOff = Texture2D(path("mainMenu") / "quitOff.tga");
+
+  // new campaign
+  newCampaignBackground = Texture2D(path("newCampaign") / "background.tga");
+  newCampaignTitle = Texture2D(path("newCampaign") / "title.tga");
+  difficulty75On = Texture2D(path("newCampaign") / "difficulty75On.tga");
+  difficulty75Off = Texture2D(path("newCampaign") / "difficulty75Off.tga");
+  difficulty90On = Texture2D(path("newCampaign") / "difficulty90On.tga");
+  difficulty90Off = Texture2D(path("newCampaign") / "difficulty90Off.tga");
+  difficulty100On = Texture2D(path("newCampaign") / "difficulty100On.tga");
+  difficulty100Off = Texture2D(path("newCampaign") / "difficulty100Off.tga");
+  difficulty110On = Texture2D(path("newCampaign") / "difficulty110On.tga");
+  difficulty110Off = Texture2D(path("newCampaign") / "difficulty110Off.tga");
+  difficulty125On = Texture2D(path("newCampaign") / "difficulty125On.tga");
+  difficulty125Off = Texture2D(path("newCampaign") / "difficulty125Off.tga");
+
+  // options
+  optionsBackground = Texture2D(path("options") / "background.tga");
 
   // clean up
   image2Dv.reset();

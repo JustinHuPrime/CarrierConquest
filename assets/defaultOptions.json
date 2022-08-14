@@ -1,4 +1,5 @@
 {
   "msaa": 0,
-  "vsync": false
+  "vsync": false,
+  "playTutorial": true
 }

@@ -21,9 +21,8 @@
 
 #include <SDL2/SDL.h>
 
-#include <vector>
-
 #include "ui/components.h"
+#include "ui/scene/newCampaign.h"
 #include "ui/window.h"
 
 using namespace std;
@@ -95,14 +94,15 @@ void mainMenu() noexcept {
                                                    event.button.y)) {
               case 0: {
                 // new campaign
-                return;
+                return newCampaign();
               }
               case 1: {
                 // load campaign
+                return;  // TODO
               }
               case 2: {
                 // options
-                return;
+                return;  // TODO
               }
               case 3: {
                 // quit

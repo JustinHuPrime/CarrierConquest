@@ -285,6 +285,8 @@ class ResourceManager final {
   ShaderProgram solid2D;
   EBO cursorEBO;
   std::vector<VAO::Attribute> cursorAttributes;
+  Texture2D backOn;
+  Texture2D backOff;
 
   // main menu
   Texture2D mainMenuBackground;
@@ -299,10 +301,22 @@ class ResourceManager final {
   Texture2D quitOff;
 
   // new campaign
-
-  // load campaign
+  Texture2D newCampaignBackground;
+  Texture2D newCampaignTitle;
+  Texture2D difficulty75On;
+  Texture2D difficulty75Off;
+  Texture2D difficulty90On;
+  Texture2D difficulty90Off;
+  Texture2D difficulty100On;
+  Texture2D difficulty100Off;
+  Texture2D difficulty110On;
+  Texture2D difficulty110Off;
+  Texture2D difficulty125On;
+  Texture2D difficulty125Off;
 
   // options
+  Texture2D optionsBackground;
+  // TODO: options menu
 
   ResourceManager() noexcept;
   ResourceManager(ResourceManager const &) noexcept = delete;

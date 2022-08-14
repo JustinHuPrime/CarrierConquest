@@ -65,10 +65,12 @@ path getOptionsPath() {
 void to_json(json &j, Options const &o) {
   j["msaa"] = o.msaa;
   j["vsync"] = o.vsync;
+  j["playTutorial"] = o.playTutorial;
 }
 void from_json(json const &j, Options &o) {
   j.at("msaa").get_to(o.msaa);
   j.at("vsync").get_to(o.vsync);
+  j.at("playTutorial").get_to(o.playTutorial);
 }
 
 Options::Options() {
