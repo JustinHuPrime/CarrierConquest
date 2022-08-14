@@ -24,6 +24,7 @@
 #include <nlohmann/json.hpp>
 
 #include "util/exceptions/initException.h"
+#include "util/paths.h"
 
 #if !defined(NDEBUG)
 #elif defined(__linux__)
@@ -35,33 +36,12 @@
 #endif
 
 using namespace carrier_conquest::util::exceptions;
+using namespace carrier_conquest::util;
 using namespace std;
 using namespace std::filesystem;
 using namespace nlohmann;
 
 namespace carrier_conquest {
-namespace {
-#if !defined(NDEBUG)
-path getOptionsPath() { return path("options.json"); }
-#elif defined(__linux__)
-path getOptionsPath() {
-  char const *homePath = getenv("HOME");
-  if (homePath == nullptr) {
-    passwd const *pw = getpwuid(geteuid());  // NOLINT(runtime/threadsafe_fn)
-    if (pw == nullptr) throw InitException("unable to find home directory");
-    homePath = pw->pw_dir;
-  }
-
-  path configPath(homePath);
-  configPath /= ".carrier-conquest";
-  configPath /= "options.json";
-  return configPath;
-}
-#else
-#error "operating system not supported/recognized"
-#endif
-}  // namespace
-
 void to_json(json &j, Options const &o) {
   j["msaa"] = o.msaa;
   j["vsync"] = o.vsync;
@@ -74,7 +54,7 @@ void from_json(json const &j, Options &o) {
 }
 
 Options::Options() {
-  path optionsPath = getOptionsPath();
+  path optionsPath = getSavePath() / "options.json";
   if (!exists(optionsPath)) {
     optionsPath = ASSET_PREFIX;
     optionsPath /= "defaultOptions.json";
@@ -99,7 +79,7 @@ Options::~Options() noexcept {
   try {
     ofstream fout;
     fout.exceptions(ofstream::failbit | ofstream::badbit);
-    fout.open(getOptionsPath(), ios_base::out | ios_base::binary);
+    fout.open(getSavePath() / "options.json", ios_base::out | ios_base::binary);
     json j(*this);
     fout << setw(2) << j;
   } catch (...) {
