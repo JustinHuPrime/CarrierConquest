@@ -29,7 +29,7 @@ namespace carrier_conquest::util {
 class LoadingThread final {
  public:
   explicit LoadingThread(
-      std::function<void(std::stop_token)> const &function) noexcept;
+      std::function<void(std::stop_token const &)> const &function) noexcept;
   LoadingThread(LoadingThread const &) noexcept = delete;
   LoadingThread(LoadingThread &&) noexcept = default;
 
@@ -42,7 +42,7 @@ class LoadingThread final {
 
  private:
   std::atomic_bool running;
-  std::function<void(std::stop_token)> function;
+  std::function<void(std::stop_token const &)> function;
   std::jthread thread;
 };
 }  // namespace carrier_conquest::util

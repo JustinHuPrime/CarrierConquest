@@ -17,17 +17,18 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "util/loadingThread.h"
+#include "game/game.h"
 
 using namespace std;
 
-namespace carrier_conquest::util {
-LoadingThread::LoadingThread(
-    std::function<void(stop_token const &)> const &function_) noexcept
-    : running(true), function(function_), thread([this](stop_token stop) {
-        function(stop);
-        running = false;
-      }) {}
+namespace carrier_conquest::game {
+void GameState::generate(std::stop_token const &token,
+                         uint32_t difficulty) noexcept {}
+void GameState::load(std::stop_token const &token) noexcept {}
 
-bool LoadingThread::isRunning() const noexcept { return running; }
-}  // namespace carrier_conquest::util
+GameState::GameState() {}
+
+GameState::~GameState() {}
+
+unique_ptr<GameState> gameState;
+}  // namespace carrier_conquest::game

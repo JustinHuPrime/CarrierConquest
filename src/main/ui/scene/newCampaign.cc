@@ -21,9 +21,16 @@
 
 #include <SDL2/SDL.h>
 
+#include "game/game.h"
 #include "ui/components.h"
+#include "ui/scene/loading.h"
 #include "ui/scene/mainMenu.h"
 #include "ui/window.h"
+#include "util/loadingThread.h"
+
+using namespace carrier_conquest::util;
+using namespace std;
+using namespace carrier_conquest::game;
 
 namespace carrier_conquest::ui::scene {
 class NewCampaign final {
@@ -83,6 +90,8 @@ class NewCampaign final {
   Button2D back;
 };
 
+constexpr array<uint32_t, 5> DIFFICULTIES = {75, 90, 100, 110, 125};
+
 void newCampaign() noexcept {
   NewCampaign newCampaign;
   while (true) {
@@ -100,27 +109,26 @@ void newCampaign() noexcept {
         }
         case SDL_MOUSEBUTTONUP: {
           if (event.button.button == SDL_BUTTON_LEFT) {
-            switch (newCampaign.buttonManager.mouseUp(event.button.x,
-                                                      event.button.y)) {
-              case 0: {
-                // 75% difficulty
-                return;  // TODO
-              }
-              case 1: {
-                // 90% difficulty
-                return;  // TODO
-              }
-              case 2: {
-                // 100% difficulty
-                return;  // TODO
-              }
-              case 3: {
-                // 110% difficulty
-                return;  // TODO
-              }
+            switch (ptrdiff_t index = newCampaign.buttonManager.mouseUp(
+                        event.button.x, event.button.y)) {
+              case 0:
+              case 1:
+              case 2:
+              case 3:
               case 4: {
-                // 125% difficulty
-                return;  // TODO
+                // new campaign with specified difficulty
+                return loading(LoadingThread([index](stop_token const &token) {
+                                 GameState::generate(token,
+                                                     DIFFICULTIES[index]);
+                                 GameState::load(token);
+                               }),
+                               []() {
+                                 if (gameState) {
+                                   // TODO: start playing
+                                 } else {
+                                   // TODO: failed to load
+                                 }
+                               });
               }
               case 5: {
                 // back

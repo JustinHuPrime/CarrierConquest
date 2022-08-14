@@ -21,9 +21,15 @@
 
 #include <SDL2/SDL.h>
 
+#include "game/game.h"
 #include "ui/components.h"
+#include "ui/scene/loading.h"
 #include "ui/scene/newCampaign.h"
 #include "ui/window.h"
+
+using namespace carrier_conquest::util;
+using namespace std;
+using namespace carrier_conquest::game;
 
 namespace carrier_conquest::ui::scene {
 class MainMenu final {
@@ -96,7 +102,16 @@ void mainMenu() noexcept {
               }
               case 1: {
                 // load campaign
-                return;  // TODO
+                return loading(LoadingThread([](stop_token const &token) {
+                                 GameState::load(token);
+                               }),
+                               []() {
+                                 if (gameState) {
+                                   // TODO: start playing
+                                 } else {
+                                   // TODO: failed to load
+                                 }
+                               });
               }
               case 2: {
                 // options
