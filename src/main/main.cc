@@ -24,7 +24,9 @@
 #include <sstream>
 
 #include "options.h"
+#include "ui/components.h"
 #include "ui/resources.h"
+#include "ui/scene/mainMenu.h"
 #include "ui/window.h"
 #include "util/exceptions/initException.h"
 #include "version.h"
@@ -33,6 +35,7 @@ using namespace std;
 using namespace carrier_conquest;
 using namespace carrier_conquest::util::exceptions;
 using namespace carrier_conquest::ui;
+using namespace carrier_conquest::ui::scene;
 
 int main(int argc, char **) {
   cout << "Carrier Conquest version " << VERSION_MAJOR << "." << VERSION_MINOR
@@ -52,7 +55,8 @@ int main(int argc, char **) {
     return EXIT_FAILURE;
   }
 
-  try {  // check SDL2
+  try {
+    // check SDL2
     SDL_version linked;
     SDL_GetVersion(&linked);
     SDL_version compiled;
@@ -66,6 +70,17 @@ int main(int argc, char **) {
     }
 
     // initialize and check freetype
+    freetype = make_unique<FreeType>();
+    int linkedMajor, linkedMinor, linkedPatch;
+    FT_Library_Version(freetype->get(), &linkedMajor, &linkedMinor,
+                       &linkedPatch);
+    if (FREETYPE_MAJOR != linkedMajor || FREETYPE_MINOR > linkedMinor) {
+      stringstream ss;
+      ss << "Expected FreeType version " << FREETYPE_MAJOR << "."
+         << FREETYPE_MINOR << "." << FREETYPE_PATCH << " or later, but found "
+         << linkedMajor << "." << linkedMinor << "." << linkedPatch;
+      throw InitException("Incompatible FreeType version", ss.str());
+    }
 
     // initialize stbi
     stbi_set_flip_vertically_on_load(true);
@@ -76,24 +91,32 @@ int main(int argc, char **) {
     resources = make_unique<ResourceManager>();
 
     // load resources
+    resources->loadSplash();
+    SDL_SetCursor(resources->busyCursor.get());
+    Background2D splash(resources->splash);
+    splash.draw();
+    window->render();
+    resources->loadGame();
+    SDL_SetCursor(resources->arrowCursor.get());
 
     // start actual game
+    mainMenu();
 
     return EXIT_SUCCESS;
   } catch (InitException const &e) {
     if (SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, e.getTitle().c_str(),
                                  e.getMessage().c_str(),
-                                 window ? window->getWindow() : nullptr) != 0) {
+                                 window ? window->getWindow() : nullptr) != 0)
       cerr << "ERROR: " << e.getTitle() << ": " << e.getMessage() << endl;
-      return EXIT_FAILURE;
-    }
+
+    return EXIT_FAILURE;
   } catch (...) {
     if (SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "Unexpected Error",
                                  "An unexpected error has occurred.",
-                                 window ? window->getWindow() : nullptr) != 0) {
+                                 window ? window->getWindow() : nullptr) != 0)
       cerr << "ERROR: Unexpected Error: An unexpected error has occurred."
            << endl;
-      throw;
-    }
+
+    throw;
   }
 }
