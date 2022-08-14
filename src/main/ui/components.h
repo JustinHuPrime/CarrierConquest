@@ -20,6 +20,8 @@
 #ifndef CARRIERCONQUEST_UI_COMPONENTS_H_
 #define CARRIERCONQUEST_UI_COMPONENTS_H_
 
+#include <vector>
+
 #include "ui/resources.h"
 
 namespace carrier_conquest::ui {
@@ -62,10 +64,107 @@ class Image2D final {
   Image2D(Texture2D &, float x, float y) noexcept;
 };
 
-class Button2D final {
+class Clickable {
  public:
-  bool on;
+  Clickable() noexcept;
+  Clickable(Clickable const &) noexcept = default;
+  Clickable(Clickable &&) noexcept = default;
 
+  virtual ~Clickable() noexcept = default;
+
+  Clickable &operator=(Clickable const &) noexcept = default;
+  Clickable &operator=(Clickable &&) noexcept = default;
+
+  virtual bool clicked(int32_t x, int32_t y) const noexcept = 0;
+
+  virtual void activate();
+  virtual void deactivate();
+
+ protected:
+  bool active;
+};
+
+template <typename T>
+class ButtonManager final {
+ public:
+  ButtonManager(
+      std::vector<std::reference_wrapper<T>> const &clickables_) noexcept
+      : clickables(clickables_), clicked(clickables.end()) {}
+  ButtonManager(ButtonManager const &) noexcept = delete;
+  ButtonManager(ButtonManager &&) noexcept = default;
+
+  ~ButtonManager() noexcept = default;
+
+  ButtonManager &operator=(ButtonManager const &) noexcept = delete;
+  ButtonManager &operator=(ButtonManager &&) noexcept = default;
+
+  void mouseDown(int32_t x, int32_t y) noexcept {
+    clicked = std::find_if(clickables.begin(), clickables.end(),
+                           [&x, &y](T const &t) { return t.clicked(x, y); });
+
+    if (clicked != clickables.end()) {
+      clicked->get().activate();
+    }
+  }
+
+  ptrdiff_t mouseUp(int32_t x, int32_t y) noexcept {
+    if (clicked == clickables.end()) {
+      return -1;
+    } else {
+      clicked->get().deactivate();
+      return clicked->get().clicked(x, y) ? clicked - clickables.begin() : -1;
+    }
+  }
+
+ private:
+  std::vector<std::reference_wrapper<T>> clickables;
+  std::vector<std::reference_wrapper<T>>::iterator clicked;
+};
+
+template <typename T>
+class FocusManager final {
+ public:
+  FocusManager(
+      std::vector<std::reference_wrapper<T>> const &clickables_) noexcept
+      : clickables(clickables_), active(clickables.end()) {}
+  FocusManager(FocusManager const &) noexcept = delete;
+  FocusManager(FocusManager &&) noexcept = default;
+
+  ~FocusManager() noexcept = default;
+
+  FocusManager &operator=(FocusManager const &) noexcept = delete;
+  FocusManager &operator=(FocusManager &&) noexcept = default;
+
+  void mouseDown(int32_t x, int32_t y) noexcept {
+    if (active != clickables.end()) {
+      active->get().deactivate();
+    }
+
+    active =
+        std::find_if(clickables.begin(), clickables.end(),
+                     [&x, &y](Clickable const &t) { return t.clicked(x, y); });
+  }
+
+  T *mouseUp(int32_t x, int32_t y) noexcept {
+    if (active == clickables.end()) {
+      return nullptr;
+    } else {
+      if (active->get().clicked(x, y)) {
+        active->get().activate();
+        return &active->get();
+      } else {
+        return nullptr;
+      }
+    }
+  }
+
+ private:
+  std::vector<std::reference_wrapper<T>> clickables;
+  std::vector<std::reference_wrapper<T>>::iterator active;
+};
+
+class Button2D final : public Clickable {
+ public:
   static Button2D centered(Texture2D &onTexture, Texture2D &offTexture, float x,
                            float y) noexcept;
   static Button2D alignRight(Texture2D &onTexture, Texture2D &offTexture,
@@ -75,14 +174,14 @@ class Button2D final {
   Button2D(Button2D const &) noexcept = delete;
   Button2D(Button2D &&) noexcept = default;
 
-  ~Button2D() noexcept = default;
+  ~Button2D() noexcept override = default;
 
   Button2D &operator=(Button2D const &) noexcept = delete;
   Button2D &operator=(Button2D &&) noexcept = default;
 
   void draw() noexcept;
 
-  bool clicked(int32_t x, int32_t y) const noexcept;
+  bool clicked(int32_t x, int32_t y) const noexcept override;
 
  private:
   Texture2D &onTexture;
@@ -94,16 +193,14 @@ class Button2D final {
   float top;
   float bottom;
 
-  static constexpr float RADIUS = 100;
+  static constexpr float RADIUS = 50.0f;
 
   Button2D(Texture2D &onTexture, Texture2D &offTexture, float x,
            float y) noexcept;
 };
 
-class Textbox2D final {
+class Textbox2D final : public Clickable {
  public:
-  bool active;
-
   static Textbox2D alignTop(Font &font, Texture2D &texture,
                             glm::vec4 const &colour, float x, float y) noexcept;
   Textbox2D(Textbox2D const &) noexcept = delete;
@@ -147,7 +244,7 @@ class Textbox2D final {
   VBO cursorVBO;
   VAO cursorVAO;
 
-  static constexpr float RADIUS = 50;
+  static constexpr float RADIUS = 25.0f;
 
   Textbox2D(Font &font, Texture2D &texture, glm::vec4 const &colour, float x,
             float y) noexcept;
@@ -186,7 +283,7 @@ class TextField2D final {
   VBO glyphVBO;
   VAO glyphVAO;
 
-  static constexpr float RADIUS = 0;
+  static constexpr float RADIUS = 0.0f;
 
   TextField2D(Font &font, Texture2D &texture, glm::vec4 const &colour, float x,
               float y) noexcept;

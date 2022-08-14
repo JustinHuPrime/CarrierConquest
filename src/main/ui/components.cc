@@ -113,6 +113,12 @@ void Image2D::draw() noexcept {
   glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 }
 
+Clickable::Clickable() noexcept : active(false) {}
+
+void Clickable::activate() { active = true; }
+
+void Clickable::deactivate() { active = false; }
+
 Button2D Button2D::centered(Texture2D &onTexture, Texture2D &offTexture,
                             float x, float y) noexcept {
   return Button2D(onTexture, offTexture, x - scaleX(onTexture) / 2.0f,
@@ -131,8 +137,7 @@ Button2D Button2D::alignLeft(Texture2D &onTexture, Texture2D &offTexture,
 
 Button2D::Button2D(Texture2D &onTexture, Texture2D &offTexture, float x,
                    float y) noexcept
-    : on(false),
-      onTexture(onTexture),
+    : onTexture(onTexture),
       offTexture(offTexture),
       vbo(
           {
@@ -162,7 +167,7 @@ Button2D::Button2D(Texture2D &onTexture, Texture2D &offTexture, float x,
 }
 
 void Button2D::draw() noexcept {
-  (on ? onTexture : offTexture).use(GL_TEXTURE0);
+  (active ? onTexture : offTexture).use(GL_TEXTURE0);
   ScopeGuard guard = vao.use();
   resources->image2D.use();
   resources->image2D.setUniform("tex", 0);
@@ -195,8 +200,7 @@ Textbox2D Textbox2D::alignTop(Font &font, Texture2D &texture,
 
 Textbox2D::Textbox2D(Font &font, Texture2D &texture, vec4 const &colour,
                      float x, float y) noexcept
-    : active(false),
-      font(font),
+    : font(font),
       texture(texture),
       colour(colour),
       vbo(
