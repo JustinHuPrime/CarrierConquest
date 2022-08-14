@@ -140,8 +140,8 @@ class Texture2D final : public GLResource {
   int getWidth() const noexcept;
   int getHeight() const noexcept;
 
-  static constexpr float SCREEN_WIDTH = 3840.0f;
-  static constexpr float SCREEN_HEIGHT = 2160.0f;
+  static constexpr float SCREEN_WIDTH = 1920.0f;
+  static constexpr float SCREEN_HEIGHT = 1080.0f;
 
  private:
   Texture2D(int width, int height, void const *pixels) noexcept;
