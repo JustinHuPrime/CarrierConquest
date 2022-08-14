@@ -17,11 +17,11 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#ifndef CARRIER_CONQUEST_UI_SCENE_NEWCAMPAIGN_H_
-#define CARRIER_CONQUEST_UI_SCENE_NEWCAMPAIGN_H_
+#ifndef CARRIERCONQUEST_UI_SCENE_NEWCAMPAIGN_H_
+#define CARRIERCONQUEST_UI_SCENE_NEWCAMPAIGN_H_
 
 namespace carrier_conquest::ui::scene {
 void newCampaign() noexcept;
 }
 
-#endif  // CARRIER_CONQUEST_UI_SCENE_NEWCAMPAIGN_H_
+#endif  // CARRIERCONQUEST_UI_SCENE_NEWCAMPAIGN_H_

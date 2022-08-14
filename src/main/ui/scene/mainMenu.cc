@@ -25,8 +25,6 @@
 #include "ui/scene/newCampaign.h"
 #include "ui/window.h"
 
-using namespace std;
-
 namespace carrier_conquest::ui::scene {
 class MainMenu final {
  public:
