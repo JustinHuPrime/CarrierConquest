@@ -42,8 +42,6 @@ class Window final {
   int getWidth() const noexcept;
   int getHeight() const noexcept;
 
-  void clear() noexcept;
-
  private:
   std::unique_ptr<SDL_Window, decltype(&SDL_DestroyWindow)> window;
   std::unique_ptr<std::remove_pointer<SDL_GLContext>::type,

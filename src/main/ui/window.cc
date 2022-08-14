@@ -200,8 +200,6 @@ Window::Window()
   glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
   glDebugMessageCallback(debugMessageCallback, nullptr);
 #endif
-
-  clear();
 }
 
 Window::~Window() noexcept {
@@ -214,11 +212,6 @@ void Window::render() noexcept { SDL_GL_SwapWindow(window.get()); }
 SDL_Window *Window::getWindow() noexcept { return window.get(); }
 int Window::getWidth() const noexcept { return width; }
 int Window::getHeight() const noexcept { return height; }
-
-void Window::clear() noexcept {
-  glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
-  glClear(GL_COLOR_BUFFER_BIT);
-}
 
 unique_ptr<Window> window;
 }  // namespace carrier_conquest::ui
