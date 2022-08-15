@@ -17,10 +17,14 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-#include "ui/scene/scene.h"
+#ifndef CARRIERCONQUEST_UTIL_OVERLOADED_H_
+#define CARRIERCONQUEST_UTIL_OVERLOADED_H_
 
-namespace carrier_conquest::ui::scene {
-NextScene::operator bool() const noexcept { return static_cast<bool>(value); }
+namespace carrier_conquest::util {
+template <typename... Functions>
+struct overloaded : Functions... {
+  using Functions::operator()...;
+};
+}  // namespace carrier_conquest::util
 
-NextScene NextScene::operator()() const noexcept { return (*value)(); }
-}  // namespace carrier_conquest::ui::scene
+#endif  // CARRIERCONQUEST_UTIL_OVERLOADED_H_

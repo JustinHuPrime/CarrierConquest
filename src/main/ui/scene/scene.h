@@ -26,8 +26,8 @@
 namespace carrier_conquest::ui::scene {
 struct NextScene {
  public:
-  NextScene(std::nullopt_t) noexcept;
-  NextScene(std::function<NextScene()> const &next) noexcept;
+  template <typename T>
+  NextScene(T &&next) noexcept : value(next) {}
   NextScene(NextScene const &) noexcept = default;
   NextScene(NextScene &&) noexcept = default;
 

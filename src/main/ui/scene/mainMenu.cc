@@ -21,13 +21,17 @@
 
 #include <SDL2/SDL.h>
 
+#include <memory>
+
 #include "game/game.h"
 #include "ui/components.h"
 #include "ui/scene/loading.h"
 #include "ui/scene/newCampaign.h"
 #include "ui/window.h"
+#include "util/overloaded.h"
 
 using namespace carrier_conquest::util;
+using namespace carrier_conquest::util::exceptions;
 using namespace std;
 using namespace carrier_conquest::game;
 
@@ -98,21 +102,33 @@ NextScene mainMenu() noexcept {
                                                    event.button.y)) {
               case 0: {
                 // new campaign
-                return newCampaign();
+                return newCampaign;
               }
               case 1: {
                 // load campaign
-                return loading(LoadingThread([](stop_token const &token) {
-                                 GameState::load(token);
-                               }),
-                               function([]() -> NextScene {
-                                 //  if (gameState) {
-                                 //    // TODO: start playing
-                                 //  } else {
-                                 //    // TODO: failed to load
-                                 //  }
-                                 return nullopt;
-                               }));
+                return loading(
+                    LoadingThread([](stop_token const &token) {
+                      GameState::load(token);
+                    }),
+                    []() -> NextScene {
+                      return visit(
+                          overloaded{
+                              [](unique_ptr<GameState> const &gameState)
+                                  -> NextScene {
+                                // TODO: start playing
+                                return nullopt;
+                              },
+                              [](LoadException const &exception) -> NextScene {
+                                // failed to load
+                                SDL_ShowSimpleMessageBox(
+                                    SDL_MESSAGEBOX_ERROR,
+                                    exception.getTitle().c_str(),
+                                    exception.getMessage().c_str(),
+                                    window->getWindow());
+                                return newCampaign;
+                              }},
+                          gameState);
+                    });
               }
               case 2: {
                 // options

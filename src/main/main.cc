@@ -102,9 +102,7 @@ int main(int argc, char **) {
 
     // start actual game
     NextScene next = NextScene(mainMenu);
-    while (next) {
-      next = next();
-    }
+    while (next) next = next();
 
     return EXIT_SUCCESS;
   } catch (InitException const &e) {

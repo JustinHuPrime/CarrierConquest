@@ -21,14 +21,18 @@
 
 #include <SDL2/SDL.h>
 
+#include <memory>
+
 #include "game/game.h"
 #include "ui/components.h"
 #include "ui/scene/loading.h"
 #include "ui/scene/mainMenu.h"
 #include "ui/window.h"
 #include "util/loadingThread.h"
+#include "util/overloaded.h"
 
 using namespace carrier_conquest::util;
+using namespace carrier_conquest::util::exceptions;
 using namespace std;
 using namespace carrier_conquest::game;
 
@@ -117,23 +121,34 @@ NextScene newCampaign() noexcept {
               case 3:
               case 4: {
                 // new campaign with specified difficulty
-                return loading(LoadingThread([index](stop_token const &token) {
-                                 GameState::generate(token,
-                                                     DIFFICULTIES[index]);
-                                 GameState::load(token);
-                               }),
-                               function([]() -> NextScene {
-                                 //  if (gameState) {
-                                 //    // TODO: start playing
-                                 //  } else {
-                                 //    // TODO: failed to load
-                                 //  }
-                                 return nullopt;
-                               }));
+                return loading(
+                    LoadingThread([index](stop_token const &token) {
+                      GameState::generate(token, DIFFICULTIES[index]);
+                      GameState::load(token);
+                    }),
+                    []() -> NextScene {
+                      return visit(
+                          overloaded{
+                              [](unique_ptr<GameState> const &gameState)
+                                  -> NextScene {
+                                // TODO: start playing
+                                return nullopt;
+                              },
+                              [](LoadException const &exception) -> NextScene {
+                                // failed to load
+                                SDL_ShowSimpleMessageBox(
+                                    SDL_MESSAGEBOX_ERROR,
+                                    exception.getTitle().c_str(),
+                                    exception.getMessage().c_str(),
+                                    window->getWindow());
+                                return nullopt;
+                              }},
+                          gameState);
+                    });
               }
               case 5: {
                 // back
-                return mainMenu();
+                return mainMenu;
               }
             }
           }
